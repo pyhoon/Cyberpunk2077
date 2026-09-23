@@ -1,3 +1,4 @@
 # Cyberpunk2077
 
-![Preview](preview.png)
+![Preview1](preview1.png)
+![Preview2](preview2.png)
