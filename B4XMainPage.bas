@@ -140,7 +140,7 @@ Private Sub BuildLayout
     'clv.Initialize(Me, "")
     clv.PressedColor = xui.Color_Transparent
     'clv.DividerColor = xui.Color_Transparent
-    clv.AsView.Color = xui.Color_Transparent
+    clv.AsView.Color = CurrentBgColor
     Root.AddView(clv.AsView, 0, 0, Root.Width, Root.Height)
     If LastLandscape Then
         BuildLandscape
@@ -221,7 +221,7 @@ End Sub
 Private Sub ItemBase(W As Float, H As Float) As B4XView
     Dim p As B4XView = xui.CreatePanel("")
     p.SetLayoutAnimated(0, 0, 0, W, H)
-    p.Color = xui.Color_Transparent
+    p.Color = CurrentBgColor
     Return p
 End Sub
 
