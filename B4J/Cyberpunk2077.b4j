@@ -1,19 +1,22 @@
 ﻿AppType=JavaFX
 Build1=Default,b4j.example
+File1=1.bjl
+FileGroup1=Default Group
 Group=Default Group
 Library1=b4xpages
 Library2=jcore
 Library3=jfx
 Library4=xui views
+Library5=jxui
 Module1=|relative|..\B4XMainPage
-NumberOfFiles=0
-NumberOfLibraries=4
+NumberOfFiles=1
+NumberOfLibraries=5
 NumberOfModules=1
 Version=10.7
 @EndOfDesignText@
 #Region Project Attributes 
-	#MainFormWidth: 600
-	#MainFormHeight: 600 
+	#MainFormWidth: -1
+	#MainFormHeight: -1 
 #End Region
 
 Sub Process_Globals
@@ -23,6 +26,15 @@ End Sub
 
 Sub AppStart (Form1 As Form, Args() As String)
 	MainForm = Form1
+	'MainForm.FullScreen = True
+	MainForm.SetFormStyle("UNDECORATED")
+	
+	Dim ps As Screen = fx.PrimaryScreen
+	MainForm.WindowLeft = ps.MinX
+	MainForm.WindowWidth = ps.MaxX - ps.MinX
+	MainForm.WindowTop = ps.MinY
+	MainForm.WindowHeight = ps.MaxY - ps.MinY
+	
 	MainForm.Show
 	Dim PagesManager As B4XPagesManager
 	PagesManager.Initialize(MainForm)
