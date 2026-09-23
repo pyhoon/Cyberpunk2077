@@ -79,7 +79,7 @@ End Sub
 Private Sub B4XPage_Created (Root1 As B4XView)
     Root = Root1
 	Root.LoadLayout("1")
-    ApplyThemeColors(True)
+    ApplyThemeColors(False)
     BuildLayout
 End Sub
 
