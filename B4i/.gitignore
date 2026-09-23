@@ -1,0 +1,8 @@
+# ignore files
+#*.b4i.meta
+*.otf
+*.ttf
+
+# ignore ALL files in these directories
+AutoBackups/
+Objects/
