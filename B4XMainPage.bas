@@ -138,10 +138,11 @@ Private Sub BuildLayout
     Root.RemoveAllViews
     Root.Color = CurrentBgColor
     'clv.Initialize(Me, "")
-    clv.PressedColor = xui.Color_Transparent
+    clv.PressedColor = Bit.And(CurrentAccentColor, 0x33FFFFFF)
     'clv.DividerColor = xui.Color_Transparent
     clv.AsView.Color = CurrentBgColor
     Root.AddView(clv.AsView, 0, 0, Root.Width, Root.Height)
+    clv.Clear
     If LastLandscape Then
         BuildLandscape
     Else
@@ -152,44 +153,35 @@ End Sub
 
 Private Sub BuildPortrait
     Dim W As Float = clv.AsView.Width
-    AddItem(HeaderPanel(W, 96), 96)
-    AddItem(RamPanel(W, 46), 46)
-    AddItem(CallPanel(W, 158), 158)
-    AddItem(GridPanel(W, 236, 2), 236)
-    AddItem(TempPanel(W, 148), 148)
-    AddItem(NodesTitlePanel(W, 30), 30)
+    AddItem(HeaderPanel(W, 96), 96, "")
+    AddItem(RamPanel(W, 46), 46, "")
+    AddItem(CallPanel(W, 158), 158, "")
+    AddItem(GridPanel(W, 236, 2), 236, "")
+    AddItem(TempPanel(W, 148), 148, "")
+    AddItem(NodesTitlePanel(W, 30), 30, "")
     Dim i As Int = 0
     Do While i < NodeTitles.Size
-        AddItem(NodeRow(W, 66, i), 66)
+        AddItem(NodeRow(W, 66, i), 66, "node:" & i)
         i = i + 1
     Loop
-    AddItem(FooterPanel(W, 122), 122)
+    AddItem(FooterPanel(W, 122), 122, "theme")
 End Sub
 
 Private Sub BuildLandscape
     Dim W As Float = clv.AsView.Width
-    Dim Pad As Float = 12dip
-    AddItem(HeaderPanel(W, 96), 96)
-    AddItem(RamPanel(W, 46), 46)
-    AddItem(TwoColRow(W, 252, "SYS", "RADAR"), 252)
-    AddItem(TwoColRow(W, 176, "CALL", "AMBIENT"), 176)
-    AddItem(TwoColRow(W, 190, "SHORTCUTS", "THREAT"), 190)
-    AddItem(TwoColRow(W, 176, "GRID4", "TEMP"), 176)
-    AddItem(NodesTitlePanel(W, 30), 30)
-    Dim r As Int = 0
-    Do While r < 3
-        Dim row As B4XView = ItemBase(W, 66)
-        Dim cw As Float = (W - Pad * 3) / 2
-        Dim c1 As B4XView = AddFrameAt(row, Pad, 0, cw, 66, "Node")
-        c1.Tag = r * 2
-        FillNode(c1, r * 2)
-        Dim c2 As B4XView = AddFrameAt(row, Pad * 2 + cw, 0, cw, 66, "Node")
-        c2.Tag = r * 2 + 1
-        FillNode(c2, r * 2 + 1)
-        AddItem(row, 66)
-        r = r + 1
+    AddItem(HeaderPanel(W, 96), 96, "")
+    AddItem(RamPanel(W, 46), 46, "")
+    AddItem(TwoColRow(W, 252, "SYS", "RADAR"), 252, "")
+    AddItem(TwoColRow(W, 176, "CALL", "AMBIENT"), 176, "")
+    AddItem(TwoColRow(W, 190, "SHORTCUTS", "THREAT"), 190, "")
+    AddItem(TwoColRow(W, 176, "GRID4", "TEMP"), 176, "")
+    AddItem(NodesTitlePanel(W, 30), 30, "")
+    Dim i As Int = 0
+    Do While i < NodeTitles.Size
+        AddItem(NodeRow(W, 66, i), 66, "node:" & i)
+        i = i + 1
     Loop
-    AddItem(FooterPanel(W, 122), 122)
+    AddItem(FooterPanel(W, 122), 122, "theme")
 End Sub
 
 Private Sub TwoColRow(W As Float, H As Int, LeftKind As String, RightKind As String) As B4XView
@@ -212,8 +204,9 @@ Private Sub FillKind(Container As B4XView, Kind As String)
     If Kind = "TEMP" Then FillTemp(Container)
 End Sub
 
-Private Sub AddItem(Pnl As B4XView, H As Int)
-    clv.Add(Pnl, H)
+Private Sub AddItem(Pnl As B4XView, H As Int, Value As Object)
+    Pnl.Height = H ' enforce item height contract
+    clv.Add(Pnl, Value)
 End Sub
 
 ' ---------- Panel primitives ----------
@@ -366,11 +359,10 @@ Private Sub FillGridInto(Parent As B4XView, W As Float, H As Float, Cols As Int)
             If idx >= total Then Return
             Dim X As Float = Pad + cc * (cw + gap)
             Dim Y As Float = r * (ch + gap)
-            Dim outer As B4XView = xui.CreatePanel("AppItem")
+            Dim outer As B4XView = xui.CreatePanel("")
             outer.Color = CurrentAccentColor
             Parent.AddView(outer, X, Y, cw, ch)
             Dim nm As String = AppNames.Get(idx)
-            outer.Tag = nm
             Dim inner As B4XView = xui.CreatePanel("")
             inner.Color = CurrentPanelColor
             outer.AddView(inner, 2dip, 2dip, cw - 4dip, ch - 4dip)
@@ -421,8 +413,7 @@ End Sub
 
 Private Sub NodeRow(W As Float, H As Int, idx As Int) As B4XView
     Dim p As B4XView = ItemBase(W, H)
-    Dim c As B4XView = AddFrameTo(p, W, H, "Node")
-    c.Tag = idx
+    Dim c As B4XView = AddFrameTo(p, W, H, "")
     FillNode(c, idx)
     Return p
 End Sub
@@ -460,7 +451,7 @@ Private Sub FooterPanel(W As Float, H As Int) As B4XView
     Dim LblR As B4XView = MkLabel("STATUS: COMBAT READY", 10, COLOR_GREEN, True)
     p.AddView(LblR, 12dip, 20dip, iw, 20dip)
     LblR.SetTextAlignment("CENTER", "LEFT")
-    Dim b As B4XView = xui.CreatePanel("BtnThemeToggle")
+    Dim b As B4XView = xui.CreatePanel("")
     b.Color = CurrentAccentColor
     p.AddView(b, 12dip, 48dip, iw, 52dip)
     Dim bi As B4XView = xui.CreatePanel("")
@@ -666,19 +657,18 @@ End Sub
 
 ' ---------- Events ----------
 
-Sub BtnThemeToggle_Click
-    ApplyThemeColors(Not(IsThreatMode))
-    BuildLayout
-End Sub
-
-Sub AppItem_Click
-    Dim p As B4XView = Sender
-    Dim nm As String = p.Tag
-    Log("Cyberdeck app: " & nm)
-End Sub
-
-Sub Node_Click
-    Dim p As B4XView = Sender
-    Dim idx As Int = p.Tag
-    Log("Cyberdeck node: " & NodeTitles.Get(idx))
+' All taps arrive here: the list swallows child-view clicks and reports
+' them itself, carrying the Value given in AddItem.
+Sub clv_ItemClick(Index As Int, Value As Object)
+    Dim v As String = Value
+    If v = "" Then Return
+    If v = "theme" Then
+        ApplyThemeColors(Not(IsThreatMode))
+        BuildLayout
+        Return
+    End If
+    If v.StartsWith("node:") Then
+        Dim idx As Int = v.SubString(5)
+        Log("Cyberdeck node: " & NodeTitles.Get(idx))
+    End If
 End Sub
